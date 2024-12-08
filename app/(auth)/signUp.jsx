@@ -5,6 +5,7 @@ import { Link, router } from "expo-router";
 import { images } from "../../constants";
 import FormField from "../../components/FormField";
 import CustumButton from "../../components/CustumButton";
+import { createUser } from "../../lib/appwrite";
 
 const signUp = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,11 @@ const signUp = () => {
     password: "",
     username: "",
   });
+
+  const submit = () => {
+    createUser(formData.email, formData.password, formData.username);
+    router.push("/signIn");
+  };
 
   return (
     <>
@@ -48,7 +54,7 @@ const signUp = () => {
             <CustumButton
               containerStyles={"w-full mt-7"}
               title={"Sign Up"}
-              onPress={() => router.push("/signIn")}
+              onPress={submit}
             />
             <View className="flex justify-center pt-5 flex-row gap-2">
               <Text className="text-lg text-gray-100 font-pregular">
