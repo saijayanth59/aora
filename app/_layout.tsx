@@ -2,6 +2,7 @@ import { Stack, SplashScreen } from "expo-router";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import "./global.css";
+import AuthProvider from "../context/AuthProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,11 +31,13 @@ export default function Rootlayout() {
 
   return (
     <>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
+      <AuthProvider>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </AuthProvider>
     </>
   );
 }

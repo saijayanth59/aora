@@ -1,4 +1,11 @@
-import { View, Text, SafeAreaView, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  ScrollView,
+  Image,
+  Alert,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { Link, router } from "expo-router";
@@ -6,6 +13,7 @@ import { images } from "../../constants";
 import FormField from "../../components/FormField";
 import CustumButton from "../../components/CustumButton";
 import { createUser } from "../../lib/appwrite";
+import { useAuthContext } from "../../context/AuthProvider";
 
 const signUp = () => {
   const [formData, setFormData] = useState({
@@ -13,10 +21,34 @@ const signUp = () => {
     password: "",
     username: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { setUser, setIsLogged } = useAuthContext();
 
-  const submit = () => {
-    createUser(formData.email, formData.password, formData.username);
-    router.push("/signIn");
+  const submit = async () => {
+    try {
+      if (!formData.email || !formData.username || !formData.password) {
+        Alert.alert("Error", "Full details");
+        return;
+      }
+      // console.log(formData);
+      setIsSubmitting(true);
+      const result = await createUser(
+        formData.email,
+        formData.password,
+        formData.username
+      );
+
+      setUser(result);
+      setIsLogged(true);
+
+      console.log("Sign Up: ", result);
+      router.replace("/home");
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -49,12 +81,15 @@ const signUp = () => {
               title="Password"
               otherStyles={"mt-7"}
               value={formData.password}
-              onChange={(text) => setFormData({ ...FormField, password: text })}
+              onChange={(text) =>
+                setFormData((prev) => ({ ...prev, password: text }))
+              }
             />
             <CustumButton
               containerStyles={"w-full mt-7"}
               title={"Sign Up"}
               onPress={submit}
+              loading={isSubmitting}
             />
             <View className="flex justify-center pt-5 flex-row gap-2">
               <Text className="text-lg text-gray-100 font-pregular">

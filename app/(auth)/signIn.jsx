@@ -1,16 +1,53 @@
-import { View, Text, SafeAreaView, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  ScrollView,
+  Image,
+  Alert,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { Link, router } from "expo-router";
 import { images } from "../../constants";
 import FormField from "../../components/FormField";
 import CustumButton from "../../components/CustumButton";
+import { getCurrentUser, signInUser } from "../../lib/appwrite";
+import { useAuthContext } from "../../context/AuthProvider";
 
 const signIn = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const { setUser, setIsLogged } = useAuthContext();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const submit = async () => {
+    try {
+      if (!formData.email || !formData.password) {
+        Alert.alert("Error", "Enter details");
+        return;
+      }
+      setIsSubmitting(true);
+      await signInUser(formData.email, formData.password);
+      const result = await getCurrentUser();
+
+      console.log("Sign In: ", result);
+      setUser(result);
+      setIsLogged(true);
+      Alert.alert("Success", "User signed in successfully");
+
+      router.replace("/home");
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <>
@@ -30,18 +67,23 @@ const signIn = () => {
               title="Email"
               otherStyles={"mt-7"}
               value={formData.email}
-              onChange={(text) => setFormData({ ...formData, email: text })}
+              onChange={(text) =>
+                setFormData((prev) => ({ ...prev, email: text }))
+              }
             />
             <FormField
               title="Password"
               otherStyles={"mt-7"}
               value={formData.password}
-              onChange={(text) => setFormData({ ...FormField, password: text })}
+              onChange={(text) =>
+                setFormData((prev) => ({ ...prev, password: text }))
+              }
             />
             <CustumButton
               containerStyles={"w-full mt-7"}
               title={"Sign In"}
-              onPress={() => router.push("/signIn")}
+              onPress={submit}
+              loading={isSubmitting}
             />
             <View className="flex justify-center pt-5 flex-row gap-2">
               <Text className="text-lg text-gray-100 font-pregular">

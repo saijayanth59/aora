@@ -6,14 +6,14 @@ const CustumButton = ({
   containerStyles,
   textStyles,
   onPress,
-  Loading,
+  loading,
 }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.7}
       className={`${containerStyles} ${
-        Loading ? "opacity-50" : ""
+        loading ? "opacity-50" : ""
       } bg-secondary flex justify-center items-center flex-row min-h-[50px] mt-5 rounded-xl`}
     >
       <Text

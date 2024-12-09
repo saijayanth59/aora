@@ -1,12 +1,18 @@
 import { ScrollView, View, Text, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../constants";
 import CustumButton from "../components/CustumButton";
-import { router } from "expo-router";
+import { router, Redirect } from "expo-router";
+import { useAuthContext } from "../context/AuthProvider";
 
 const App = () => {
+  const { loading, isLogged } = useAuthContext();
+
+  if (!loading && isLogged) {
+    return <Redirect href={"/home"} />;
+  }
+
   return (
     <>
       <StatusBar style="auto" />
