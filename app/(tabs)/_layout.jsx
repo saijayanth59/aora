@@ -38,12 +38,6 @@ const TabLayout = () => {
             borderTopColor: "#232533",
             borderTopWidth: 1,
           },
-          tabBarItemStyle: {
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-          },
         }}
       >
         <Tabs.Screen
